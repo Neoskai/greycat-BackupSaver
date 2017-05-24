@@ -20,7 +20,6 @@ import com.spotify.sparkey.SparkeyWriter;
 import greycat.Callback;
 import greycat.struct.Buffer;
 import greycat.struct.BufferIterator;
-import sun.security.util.AuthResources_ja;
 
 import java.io.File;
 
@@ -31,8 +30,8 @@ public class SparkeyBackupStorage {
 
     private static final String _connectedError = "PLEASE CONNECT YOUR DATABASE FIRST";
 
-    private static final int MAXENTRIES = 100000; // Number of maximum entries before flushing file
-    private final int TIMELAPSEDURATION = 60000; // Timelapse we should swap folder after (We should build a snapshot after each timelapse)
+    private static final int MAXENTRIES = 500000; // Number of maximum entries before flushing file
+    private final int TIMELAPSEDURATION = 360000; // Timelapse we should swap folder after (We should build a snapshot after each timelapse)
 
     private int _currentFile;
     private int _currentEntries;

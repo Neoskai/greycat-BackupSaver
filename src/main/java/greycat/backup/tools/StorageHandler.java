@@ -24,7 +24,7 @@ import greycat.struct.BufferIterator;
  * @ignore ts
  */
 public class StorageHandler {
-    private static final int POOLSIZE = 5;
+    private static final int POOLSIZE = 100;
 
     private SparkeyBackupStorage[] _storages; // Contains all the storage managers
 
