@@ -17,6 +17,7 @@ package greycat.backup.tools;
 
 import com.spotify.sparkey.Sparkey;
 import com.spotify.sparkey.SparkeyWriter;
+import greycat.BackupOptions;
 import greycat.Callback;
 import greycat.struct.Buffer;
 import greycat.struct.BufferIterator;
@@ -30,9 +31,6 @@ public class SparkeyBackupStorage {
 
     private static final String _connectedError = "PLEASE CONNECT YOUR DATABASE FIRST";
 
-    private static final int MAXENTRIES = 500000; // Number of maximum entries before flushing file
-    private final int TIMELAPSEDURATION = 360000; // Timelapse we should swap folder after (We should build a snapshot after each timelapse)
-
     private int _currentFile;
     private int _currentEntries;
     private int _currentPool;
@@ -44,11 +42,17 @@ public class SparkeyBackupStorage {
 
     private SparkeyWriter _writer = null;
 
+    private int _timelapseDuration;
+    private int _maxEntry;
+
     public SparkeyBackupStorage(int poolId){
         _currentTimelapse = 0;
         _currentFile = 0;
         _currentEntries = 0;
         _currentPool = poolId;
+
+        _timelapseDuration = BackupOptions.timelapseDuration();
+        _maxEntry = BackupOptions.maxEntry();
 
         loadFilePath();
     }
@@ -135,8 +139,8 @@ public class SparkeyBackupStorage {
      * Check if we need to swap files at the end of an insert (depending on the max number of entry in a file)
      */
     private void swapCheck(){
-        long endLapse = (_currentTimelapse+1) * TIMELAPSEDURATION;
-        if(_currentEntries == MAXENTRIES || System.currentTimeMillis() > endLapse){
+        long endLapse = (_currentTimelapse+1) * _timelapseDuration;
+        if(_currentEntries == _maxEntry || System.currentTimeMillis() > endLapse){
             disconnect(new Callback<Boolean>() {
                 @Override
                 public void on(Boolean result) {
@@ -166,14 +170,14 @@ public class SparkeyBackupStorage {
         String shard = "/shard_" + _currentPool;
 
         // We then need to change the timelapse after each Backup Point. currentTimelapse is the current UNIT of Timelapseduration.
-        _currentTimelapse =  Math.floorDiv(System.currentTimeMillis() , TIMELAPSEDURATION);
+        _currentTimelapse =  Math.floorDiv(System.currentTimeMillis() , _timelapseDuration);
         String timelapse = "/timelapse_" +  _currentTimelapse + "_" + (_currentTimelapse+1);
 
         // Finally, we need to swap each file after X Entries, and write the beginning and end timelapse + the last node in this file
         long timeStamp = System.currentTimeMillis();
         String fileId = "/save_" + _currentFile++ + "-" + timeStamp;
 
-        _filePath = "data" + shard + timelapse + fileId + "-.spl";
+        _filePath = "data/logs" + shard + timelapse + fileId + "-.spl";
     }
 
     /**

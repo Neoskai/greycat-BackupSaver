@@ -16,6 +16,7 @@
 
 package greycat.backup.tools;
 
+import greycat.BackupOptions;
 import greycat.Callback;
 import greycat.struct.Buffer;
 import greycat.struct.BufferIterator;
@@ -24,19 +25,19 @@ import greycat.struct.BufferIterator;
  * @ignore ts
  */
 public class StorageHandler {
-    private static final int POOLSIZE = 100;
-
+    private int _poolSize;
     private SparkeyBackupStorage[] _storages; // Contains all the storage managers
 
     public StorageHandler(){
-        _storages = new SparkeyBackupStorage[POOLSIZE];
+        _poolSize = BackupOptions.poolSize();
+        _storages = new SparkeyBackupStorage[_poolSize];
     }
 
     /**
      * Initialization of the storage handler and all the storages
      */
     public void load(){
-        for(int i = 0; i < POOLSIZE; i++){
+        for(int i = 0; i < _poolSize; i++){
             _storages[i] = new SparkeyBackupStorage(i);
 
             _storages[i].connect(new Callback<Boolean>() {
@@ -58,7 +59,7 @@ public class StorageHandler {
         Buffer keyBuffer = iterator.next();
 
         StorageKeyChunk keyChunk = StorageKeyChunk.build(keyBuffer);
-        int currentPool = (int) keyChunk.id()%POOLSIZE;
+        int currentPool = (int) keyChunk.id()%_poolSize;
 
         // Storing
         synchronized (_storages[currentPool]) {
@@ -75,7 +76,7 @@ public class StorageHandler {
      * Closes all the storages
      */
     public void close(){
-        for(int i = 0; i < POOLSIZE; i++){
+        for(int i = 0; i < _poolSize; i++){
             _storages[i].disconnect(new Callback<Boolean>() {
                 @Override
                 public void on(Boolean result) {

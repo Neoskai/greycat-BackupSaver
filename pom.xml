@@ -71,7 +71,7 @@
         <dependency>
             <artifactId>greycat</artifactId>
             <groupId>com.datathings</groupId>
-            <version>7-SNAPSHOT</version>
+            <version>8-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -88,6 +88,11 @@
             <groupId>io.nats</groupId>
             <artifactId>jnats</artifactId>
             <version>${nats.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.datathings</groupId>
+            <artifactId>greycat-rocksdb</artifactId>
+            <version>8-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

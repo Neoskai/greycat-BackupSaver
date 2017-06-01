@@ -20,10 +20,11 @@ import greycat.*;
 import greycat.plugin.Job;
 import org.junit.Ignore;
 import org.junit.Test;
+import greycat.rocksdb.*;
 
 public class NodeGeneratorTest {
 
-    final int valuesToInsert= 100000;
+    final int valuesToInsert= 1000000;
     final long initialStamp = 1000;
 
     @Ignore
@@ -31,6 +32,7 @@ public class NodeGeneratorTest {
     public void testManyPoints(){
         //1 Node with Many Points
         Graph graph = new GraphBuilder()
+                .withStorage(new RocksDBStorage("data"))
                 .withMemorySize(2000000)
                 .build();
 
@@ -121,6 +123,10 @@ public class NodeGeneratorTest {
                         }
                     });
 
+                    if(i== 500000){
+                        graph.storage().createBackup();
+                    }
+
 
                     if(i%(valuesToInsert/10) == 0) {
                         System.out.println("<insert til " + i + " in " + (System.currentTimeMillis() - before) / 1000 + "s");
@@ -156,11 +162,11 @@ public class NodeGeneratorTest {
         });
     }
 
-    @Ignore
     @Test
     public void testMultiNodeCreation(){
         // 5 Nodes with many points
         Graph graph = new GraphBuilder()
+                .withStorage(new RocksDBStorage("data"))
                 .withMemorySize(2000000)
                 .build();
 
@@ -172,10 +178,10 @@ public class NodeGeneratorTest {
 
                 final DeferCounter counter = graph.newCounter(valuesToInsert);
 
-                for(long i = 0 ; i < 5; i++){
+                for(long i = 0 ; i < 500; i++){
                     Node initialNode = graph.newNode(0,0);
 
-                    for(long j = 0 ; j < valuesToInsert; j++){
+                    for(long j = 0 ; j < 10000; j++){
                         if(j%(valuesToInsert/10) == 0) {
                             graph.save(new Callback<Boolean>() {
                                 @Override
@@ -197,6 +203,11 @@ public class NodeGeneratorTest {
                             }
                         });
                     }
+
+                    if(i== 250){
+                        graph.storage().createBackup();
+                    }
+
 
                     initialNode.free();
                 }
