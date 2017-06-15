@@ -61,9 +61,15 @@
         <junit.version>4.12</junit.version>
         <nsq.version>1.0.0.RC4</nsq.version>
         <paho.version>1.0.2</paho.version>
+        <minio.version>3.0.4</minio.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${minio.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
@@ -77,7 +83,7 @@
         <dependency>
             <artifactId>greycat</artifactId>
             <groupId>com.datathings</groupId>
-            <version>8-SNAPSHOT</version>
+            <version>9-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

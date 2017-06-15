@@ -21,6 +21,7 @@ import greycat.BackupOptions;
 import greycat.Callback;
 import greycat.struct.Buffer;
 import greycat.struct.BufferIterator;
+import io.minio.MinioClient;
 
 import java.io.File;
 
@@ -202,6 +203,24 @@ public class SparkeyBackupStorage {
             spiFILE.renameTo(newSPIFile);
 
             _writer = null;
+
+            try {
+                MinioClient minioClient = new MinioClient(BackupOptions.minioPath(),
+                        BackupOptions.accessKey(),
+                        BackupOptions.secretKey());
+
+                if(!minioClient.bucketExists("logs")) {
+                    minioClient.makeBucket("logs");
+                }
+
+                // Upload an object 'island.jpg' with contents from '/home/joe/island.jpg'
+                minioClient.putObject("logs", newFile.getPath(), newFile.getAbsolutePath());
+                minioClient.putObject("logs", newSPIFile.getPath(), newSPIFile.getAbsolutePath());
+
+            } catch (Exception e){
+                System.err.println("Couldn't upload file to server");
+                System.out.println(e);
+            }
 
             _isConnected = false;
             if (callback != null) {
