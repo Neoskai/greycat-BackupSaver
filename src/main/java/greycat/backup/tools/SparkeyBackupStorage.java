@@ -209,13 +209,13 @@ public class SparkeyBackupStorage {
                         BackupOptions.accessKey(),
                         BackupOptions.secretKey());
 
-                if(!minioClient.bucketExists("logs")) {
-                    minioClient.makeBucket("logs");
+                if(!minioClient.bucketExists(BackupOptions.bucket())) {
+                    minioClient.makeBucket(BackupOptions.bucket());
                 }
 
                 // Upload an object 'island.jpg' with contents from '/home/joe/island.jpg'
-                minioClient.putObject("logs", newFile.getPath(), newFile.getAbsolutePath());
-                minioClient.putObject("logs", newSPIFile.getPath(), newSPIFile.getAbsolutePath());
+                minioClient.putObject(BackupOptions.bucket(), newFile.getPath(), newFile.getAbsolutePath());
+                minioClient.putObject(BackupOptions.bucket(), newSPIFile.getPath(), newSPIFile.getAbsolutePath());
 
             } catch (Exception e){
                 System.err.println("Couldn't upload file to server");
