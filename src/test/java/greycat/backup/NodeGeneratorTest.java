@@ -124,7 +124,7 @@ public class NodeGeneratorTest {
                     });
 
                     if(i% 500000 == 0){
-                        graph.storage().createBackup();
+                        graph.storage().createBackup(false);
                     }
 
 
@@ -205,7 +205,7 @@ public class NodeGeneratorTest {
                     }
 
                     if(i%100 == 0){
-                        graph.storage().createBackup();
+                        graph.storage().createBackup(false);
                     }
 
 
